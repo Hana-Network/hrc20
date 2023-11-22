@@ -15,7 +15,9 @@ contract HRC20 is ERC20, AccessControl {
         _grantRole(ADMIN_ROLE, msg.sender);
     }
 
-    function setFaucetAmount(uint256 _faucetAmount) onlyRole(ADMIN_ROLE) public {
+    function setFaucetAmount(
+        uint256 _faucetAmount
+    ) public onlyRole(ADMIN_ROLE) {
         faucetAmount = _faucetAmount;
     }
 

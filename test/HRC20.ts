@@ -85,7 +85,7 @@ describe("Token contract", function () {
       );
       expect(await hrc20.balanceOf(addr1.address)).to.equal(0);
       expect(await hrc20.balanceOf(addr2.address)).to.equal(0);
-      
+
       // Faucet is 10
       await hrc20.connect(addr1).faucet();
       expect(await hrc20.balanceOf(addr1.address)).to.equal(10);
