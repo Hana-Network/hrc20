@@ -8,7 +8,8 @@
     "compile": "hardhat compile",
     "prettier": "prettier --write 'contracts/**/*.sol'",
     "solhint": "solhint --fix 'contracts/**/*.sol'",
-    "fix": "yarn prettier && yarn solhint"
+    "fix": "yarn prettier && yarn solhint",
+    "deploy:alpha": "npx hardhat run scripts/deploy.ts --network hanaAlpha"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
