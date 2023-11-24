@@ -21,6 +21,10 @@ async function main() {
   await hanaBTC.faucet();
   await hanaETH.faucet();
 
+  // wait for 10 seconds
+  console.log("wait 10 seconds...")
+  await delay(10000);
+
   const _btcFaucetAmount = await hanaBTC.faucetAmount();
   const _ethFaucetAmount = await hanaETH.faucetAmount();
 
@@ -28,6 +32,10 @@ async function main() {
   console.log(`hanaETH deployed to ${hanaETH.target}, faucet: ${_ethFaucetAmount}`);
 
 
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
