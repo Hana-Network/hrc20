@@ -1,12 +1,10 @@
 import {
-  time,
   loadFixture,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { HRC20 } from "../typechain-types/contracts/HRC20";
-import { IERC20ErrorsInterface } from "../typechain-types/@openzeppelin/contracts/interfaces/draft-IERC6093.sol/IERC20Errors";
+import { HRC20 } from "../typechain/contracts/HRC20";
 
 // `describe` is a Mocha function that allows you to organize your tests.
 // Having your tests organized makes debugging them easier. All Mocha
@@ -29,6 +27,7 @@ describe("Token contract", function () {
     const hrc20Contract = await ethers.getContractFactory("HRC20");
 
     const hrc20: HRC20 = await hrc20Contract.deploy("HRC20", "HRC");
+    await hrc20.setFaucetAmount(10);
 
     // Fixtures can return anything you consider useful for your tests
     return { hrc20, owner, addr1, addr2 };
@@ -48,36 +47,52 @@ describe("Token contract", function () {
       const { hrc20, owner, addr1, addr2 } = await loadFixture(
         deployTokenFixture
       );
-      await hrc20.mint(owner.address, 50);
+      await hrc20.faucet();
 
       // Transfer 50 tokens from owner to addr1
       await expect(
-        hrc20.transfer(addr1.address, 50)
-      ).to.changeTokenBalances(hrc20, [owner, addr1], [-50, 50]);
+        hrc20.transfer(addr1.address, 10)
+      ).to.changeTokenBalances(hrc20, [owner, addr1], [-10, 10]);
 
       // Transfer 50 tokens from addr1 to addr2
       // We use .connect(signer) to send a transaction from another account
       await expect(
-        hrc20.connect(addr1).transfer(addr2.address, 50)
-      ).to.changeTokenBalances(hrc20, [addr1, addr2], [-50, 50]);
+        hrc20.connect(addr1).transfer(addr2.address, 10)
+      ).to.changeTokenBalances(hrc20, [addr1, addr2], [-10, 10]);
     });
 
     it("Should emit Transfer events", async function () {
       const { hrc20, owner, addr1, addr2 } = await loadFixture(
         deployTokenFixture
       );
-      await hrc20.mint(owner.address, 50);
+      await hrc20.faucet();
 
       // Transfer 50 tokens from owner to addr1
-      await expect(hrc20.transfer(addr1.address, 50))
+      await expect(hrc20.transfer(addr1.address, 10))
         .to.emit(hrc20, "Transfer")
-        .withArgs(owner.address, addr1.address, 50);
+        .withArgs(owner.address, addr1.address, 10);
 
       // Transfer 50 tokens from addr1 to addr2
       // We use .connect(signer) to send a transaction from another account
-      await expect(hrc20.connect(addr1).transfer(addr2.address, 50))
+      await expect(hrc20.connect(addr1).transfer(addr2.address, 10))
         .to.emit(hrc20, "Transfer")
-        .withArgs(addr1.address, addr2.address, 50);
+        .withArgs(addr1.address, addr2.address, 10);
     });
+
+    it("Should faucet", async function () {
+      const { hrc20, owner, addr1, addr2 } = await loadFixture(
+        deployTokenFixture
+      );
+      expect(await hrc20.balanceOf(addr1.address)).to.equal(0);
+      expect(await hrc20.balanceOf(addr2.address)).to.equal(0);
+
+      // Faucet is 10
+      await hrc20.connect(addr1).faucet();
+      expect(await hrc20.balanceOf(addr1.address)).to.equal(10);
+      await hrc20.connect(addr2).faucet();
+      expect(await hrc20.balanceOf(addr2.address)).to.equal(10);
+    });
+
   });
+
 });

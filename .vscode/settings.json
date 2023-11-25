@@ -1,3 +1,7 @@
 {
-    "solidity.compileUsingRemoteVersion": "latest"
+  "solidity.compileUsingRemoteVersion": "latest",
+  "recommendations": [
+    "nomicfoundation.hardhat-solidity"
+  ],
+  "editor.formatOnSave": true
 }
