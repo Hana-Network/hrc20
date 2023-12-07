@@ -11,6 +11,13 @@ const config: HardhatUserConfig = {
     target: "ethers-v5",
   },
   networks: {
+    local: {
+      chainId: 1337,
+      url: "http://127.0.0.1:8545",
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+      },
+    },
     hanaAlpha: {
       url: process.env.HANA_ALPHA_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
