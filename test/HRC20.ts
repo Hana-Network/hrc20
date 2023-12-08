@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { HRC20 } from "../typechain";
+import { min } from "hardhat/internal/util/bigint";
 
 describe("Token Contract", function () {
   async function deployTokenFixture() {
@@ -18,6 +19,36 @@ describe("Token Contract", function () {
 
     return { hrc20, owner, addr1, addr2 };
   }
+
+  it("can add admin wallet", async function () {
+    const { hrc20, owner, addr1 } = await loadFixture(deployTokenFixture);
+
+    const minterRole = await hrc20.MINTER_ROLE();
+    await expect(
+      hrc20.connect(addr1).grantRole(minterRole, addr1.address),
+    ).to.be.revertedWithCustomError(hrc20, "AccessControlUnauthorizedAccount");
+
+    const adminRole = await hrc20.DEFAULT_ADMIN_ROLE();
+    await hrc20.grantRole(adminRole, addr1.address);
+    expect(await hrc20.hasRole(adminRole, addr1.address)).to.equal(true);
+
+    await hrc20.connect(addr1).grantRole(minterRole, addr1.address);
+  });
+
+  it("can add minter wallet", async function () {
+    const { hrc20, owner, addr1, addr2 } =
+      await loadFixture(deployTokenFixture);
+
+    await expect(
+      hrc20.connect(addr1).mint(addr2.address, 1000),
+    ).to.be.revertedWithCustomError(hrc20, "AccessControlUnauthorizedAccount");
+
+    const minterRole = await hrc20.MINTER_ROLE();
+    await hrc20.grantRole(minterRole, addr1.address);
+    expect(await hrc20.hasRole(minterRole, addr1.address)).to.equal(true);
+
+    await hrc20.connect(addr1).mint(addr2.address, 1000);
+  });
 
   // You can nest describe calls to create subsections.
   describe("Deployment", function () {
