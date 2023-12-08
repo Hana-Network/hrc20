@@ -25,6 +25,10 @@ const config: HardhatUserConfig = {
     },
   },
   watcher: {
+    compilation: {
+      tasks: ["compile"],
+      files: ["./contracts"],
+    },
     test: {
       tasks: [{ command: "test", params: { testFiles: ["{path}"] } }],
       files: ["./test/**/*"],
