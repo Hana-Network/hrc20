@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.7.0) (security/Pausable.sol)
 
 pragma solidity ^0.8.20;
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 // Hana Improvement Proposals Contracts
-contract HRC20 is ERC20, AccessControl {
-    // Create a new role identifier for the minter role
-    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    uint256 public faucetAmount;
+contract HRC20 is ERC20, AccessControl, ReentrancyGuard {
 
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
-        _grantRole(ADMIN_ROLE, msg.sender);
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+
+    constructor(
+        string memory name,
+        string memory symbol,
+        address faucet
+    ) ERC20(name, symbol) {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, faucet);
     }
 
-    function setFaucetAmount(
-        uint256 _faucetAmount
-    ) public onlyRole(ADMIN_ROLE) {
-        faucetAmount = _faucetAmount;
-    }
-
-    function faucet() public {
-        _mint(msg.sender, faucetAmount);
+    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+        _mint(to, amount);
     }
 }
