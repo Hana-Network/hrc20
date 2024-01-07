@@ -35,6 +35,20 @@ describe("Token Contract", function () {
     await hrc20.connect(addr1).grantRole(minterRole, addr1.address);
   });
 
+  it("can remove admin wallet by another wallet", async function () {
+    const { hrc20, owner, addr1 } = await loadFixture(deployTokenFixture);
+
+    const adminRole = await hrc20.DEFAULT_ADMIN_ROLE();
+    await hrc20.grantRole(adminRole, addr1.address);
+    expect(await hrc20.hasRole(adminRole, addr1.address)).to.equal(true);
+
+    const minterRole = await hrc20.MINTER_ROLE();
+    await hrc20.connect(addr1).revokeRole(adminRole, owner.address);
+    await expect(
+      hrc20.grantRole(minterRole, addr1.address),
+    ).to.be.revertedWithCustomError(hrc20, "AccessControlUnauthorizedAccount");
+  });
+
   it("can add minter wallet", async function () {
     const { hrc20, owner, addr1, addr2 } =
       await loadFixture(deployTokenFixture);

@@ -8,7 +8,7 @@ import "./HRC20.sol";
 
 contract HanaFaucet is Ownable, ReentrancyGuard {
 
-    constructor() Ownable(msg.sender) {}
+    constructor(address owner) Ownable(owner) {}
 
     function withdrawTokens(
         address to,
