@@ -1,7 +1,9 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const faucet = await ethers.deployContract("HanaFaucet", []);
+  const faucet = await ethers.deployContract("HanaFaucet", [
+    process.env.FAUCET_ADMIN_ADDRESS ?? "",
+  ]);
   await faucet.waitForDeployment();
   console.log(`HanaFaucet deployed to ${faucet.target}`);
 
