@@ -27,6 +27,11 @@ async function main() {
     "hETH",
     faucet.target,
   ]);
+  const hanaArbETH = await ethers.deployContract("HRC20", [
+    "hanaArbETH",
+    "hAETH",
+    faucet.target,
+  ]);
   const hanaUSDC = await ethers.deployContract("HRC20", [
     "hanaUSDC",
     "hUSDC",
@@ -35,10 +40,12 @@ async function main() {
 
   await hanaBTC.waitForDeployment();
   await hanaETH.waitForDeployment();
+  await hanaArbETH.waitForDeployment();
   await hanaUSDC.waitForDeployment();
 
   console.log(`hanaBTC deployed to ${hanaBTC.target}`);
   console.log(`hanaETH deployed to ${hanaETH.target}`);
+  console.log(`hanaArbETH deployed to ${hanaArbETH.target}`);
   console.log(`hanaUSDC deployed to ${hanaUSDC.target}`);
 }
 
