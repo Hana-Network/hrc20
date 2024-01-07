@@ -7,6 +7,16 @@ async function main() {
   await faucet.waitForDeployment();
   console.log(`HanaFaucet deployed to ${faucet.target}`);
 
+  const initialBalance = "100000";
+  const signer = (await ethers.getSigners())[0];
+  await signer.sendTransaction({
+    to: faucet.target,
+    value: ethers.parseEther(initialBalance),
+  });
+  console.log(
+    `Sent ${initialBalance} native token to deployed to ${faucet.target}`,
+  );
+
   const hanaBTC = await ethers.deployContract("HRC20", [
     "hanaBTC",
     "hBTC",
